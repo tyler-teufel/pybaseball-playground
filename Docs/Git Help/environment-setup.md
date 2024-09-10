@@ -1,7 +1,5 @@
 # Get Setup Locally
 
----
-
 ### \* Disclaimer \*
 
 I want to put it out there that I use VS Code for all of my coding, and I personally recommend it not only due to how clean the UI is but also due to the extensions available. Integration with new programming languages as well as plugins for GitHub make the experience getting setup and using version control with a remote repository MUCH easier.
