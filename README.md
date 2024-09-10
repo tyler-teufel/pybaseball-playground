@@ -6,7 +6,7 @@ See the Demos folder for specific examples implementing some of the available fu
 
 ---
 
-## Setup a virtual environment for minimal problems with Python versioning
+## <p style="font-size:30px">Setup a virtual environment for minimal problems with Python versioning</p>
 
 <br>
 
