@@ -1,2 +1,4 @@
 # pybaseball-playground
-Playground for Python querying of the pybaseball api.
+Playground for utilizing the Pybaseball api with Python.
+
+See the Demos folder for specific examples implementing some of the available functions.
