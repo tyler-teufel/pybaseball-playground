@@ -16,3 +16,5 @@ data = batting_stats_range(begin,end)
 #data = batting_stats_range("2016-05-01", "2019-05-28")
 player = data.loc[lambda df: (df['Name'] == '{first_name} {last_name}'.format(first_name=first_name, last_name=last_name))]
 print(player)
+
+print(first_name)
