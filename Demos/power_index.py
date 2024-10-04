@@ -18,7 +18,7 @@ descr: custom leaderboard from baseball savant with most stats we will use
 2024_bbe.csv = https://baseballsavant.mlb.com/leaderboard/statcast?type=batter&year=2024&position=&team=&min=q&sort=barrels_per_pa&sortDir=desc
 descr: this leaderboard just used to make sure every batter had 300 BBE's,
         which is the minimum we chose for "qualified" hitters
-fg_fb60.csv = https://www.fangraphs.com/leaders/splits-leaderboards?splitArr=12&splitArrPitch=&autoPt=false&splitTeams=false&statType=player&statgroup=2&startDate=2024-03-01&endDate=2024-11-01&players=&filter=PA%7Cgt%7C60&groupBy=season&wxTemperature=&wxPressure=&wxAirDensity=&wxElevation=&wxWindSpeed=&position=B&sort=16,1&pageitems=2000000000&pg=0
+fg_fb60.csv = https://www.fangraphs.com/leaders/splits-leaderboards?splitArr=12&splitArrPitch=&autoPt=false&splitTeams=false&statType=player&statgroup=3&startDate=2024-3-1&endDate=2024-11-1&players=&filter=PA%7Cgt%7C60&groupBy=season&wxTemperature=&wxPressure=&wxAirDensity=&wxElevation=&wxWindSpeed=&position=B&sort=16,1&pageitems=2000000000&pg=0
 descr: used to get pulled flyball rate, the last stat we needed for our data
 
 P.S - we have omitted bat tracking data from the HPI due to not
@@ -31,22 +31,53 @@ from scipy.stats import pearsonr
 from statistics import stdev
 
 #%% 2024 version
-bbe_24 = pd.read_csv('Demos/Demo-csvs/batting-stats/2024_bbe.csv')
+
+'''
+* bbe_24: Pulling the 2024 bbe.csv file from the power-index-data folder.
+*
+* Contains 10 columns, 252 rows not including header:
+*
+* "last_name, first_name","player_id","attempts","avg_hit_angle","anglesweetspotpercent",
+* "max_hit_speed","avg_hit_speed","ev50","fbld","gb","max_distance","avg_distance",
+* "avg_hr_distance", "ev95plus","ev95percent","barrels","brl_percent","brl_pa"
+*
+*
+'''
+bbe_24 = pd.read_csv('Demos/Demo-csvs/power-index-data/2024/2024_bbe.csv')
 bbe_24 = bbe_24[['player_id','attempts']]
 bbe_24 = bbe_24.query("attempts >= 300")
-stats24 = pd.read_csv('Demos/Demo-csvs/batting-stats/2024_stats.csv')
-stats24 = stats24.merge(bbe_24,on='player_id') 
+
+
+
+'''
+* stats24: Pulling the 2024 stats.csv file from the power-index-data folder.
+*
+*
+* Contains 14 Columns, 286 rows not including header:
+*
+* "last_name, first_name","player_id","year","pa","home_run","xwobacon",
+* "exit_velocity_avg","barrel_batted_rate","hard_hit_percent","avg_best_speed",
+* "oz_contact_percent","whiff_percent","flyballs_percent"
+
+'''
+stats24 = pd.read_csv('Demos/Demo-csvs/power-index-data/2024/2024_stats.csv')
+
+stats24 = stats24.merge(bbe_24,on='player_id')
 stats24['hr/pa']=round((stats24['home_run']/stats24['pa'])*100,3)
 stats24=stats24.drop(columns=['home_run','pa'])
 stats24['name']=stats24['last_name, first_name']
-stats24=stats24.drop(columns='last_name, first_name')
+stats24=stats24.drop(columns=['last_name, first_name'])
+
 stats24[['lname', 'fname']] =stats24['name'].str.split(',', n=1, expand=True).fillna('')
 stats24['fname'] = stats24['fname'].str.lstrip()
 stats24 = stats24.drop(columns='name')
 stats24['playerId'] = 0 #establishing column for fangraphs ID's
-fgfb = pd.read_csv('Demos/Demo-csvs/batting-stats/fg_fb60.csv')
+
+
+
+fgfb = pd.read_csv('Demos/Demo-csvs/power-index-data/2024/2024_fg_fb60.csv')
 fgfb=fgfb[['Pull%','playerId']]
-for i in range(0,len(stats24)): #fangraphs id's needed for mergeing pulledfb%
+for i in range(0,len(stats24)-1): #fangraphs id's needed for mergeing pulledfb%
     p_id=bb.playerid_lookup(stats24.iloc[:,13][i],stats24.iloc[:,14][i],fuzzy=True)
     p_id = p_id.iloc[:,2:6]
     check = p_id[p_id['key_mlbam'].isin(stats24['player_id'])]
@@ -68,10 +99,10 @@ there is likely to be more than that if performed after the conclusion of the
 2024 season.
 """
 #%% 2023 version
-bbe_23 = pd.read_csv('2023_bbe.csv')
+bbe_23 = pd.read_csv('Demos/Demo-csvs/power-index-data/2023/2023_bbe.csv')
 bbe_23 = bbe_23[['player_id','attempts']]
 bbe_23 = bbe_23.query("attempts >= 300") #300 BBE's was the minimum we selected
-stats23 = pd.read_csv('2023_stats.csv')
+stats23 = pd.read_csv('Demos/Demo-csvs/power-index-data/2023/2023_stats.csv')
 stats23 = stats23.merge(bbe_23,on='player_id') 
 stats23['hr/pa']=round((stats23['home_run']/stats23['pa'])*100,3)
 stats23=stats23.drop(columns=['home_run','pa'])
@@ -81,7 +112,7 @@ stats23[['lname', 'fname']] =stats23['name'].str.split(',', n=1, expand=True).fi
 stats23['fname'] = stats23['fname'].str.lstrip()
 stats23 = stats23.drop(columns='name')
 stats23['playerId'] = 0 #establishing column for fangraphs ID's
-fgfb = pd.read_csv('fgfb23.csv')
+fgfb = pd.read_csv('Demos/Demo-csvs/power-index-data/2023/2023_fg_fb60.csv')
 fgfb=fgfb[['Pull%','playerId']]
 for i in range(0,len(stats23)): #getting fangraphs id's for all players in current df
     p_id=bb.playerid_lookup(stats23.iloc[:,13][i],stats23.iloc[:,14][i],fuzzy=True)
