@@ -129,7 +129,7 @@ del([bbe_24,bbe_23,check,fgfb,reorder,p_id])
 Now that we have all hitters who qualified in both seasons, we can use 
 the pearsonr function from scipy.stats to find the year-to-year correlation
 coefficients for our chosen stats. After finding those, I also found the
-correlation from our stats to hr rate in both seasons, and too the average
+correlation from our stats to hr rate in both seasons, and took the average
 of those two numbers. Once you multiply these together, that will be our
 coefficient to assign a weight to each of the stats
 """

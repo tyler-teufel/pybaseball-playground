@@ -108,3 +108,34 @@ print(stats23.head())
 total = merge_years(stats23, stats24)
 print(total.head())
 
+"""
+Now that we have all hitters who qualified in both seasons, we can use 
+the pearsonr function from scipy.stats to find the year-to-year correlation
+coefficients for our chosen stats. After finding those, I also found the
+correlation from our stats to hr rate in both seasons, and too the average
+of those two numbers. Once you multiply these together, that will be our
+coefficient to assign a weight to each of the stats
+"""
+
+# #%% Coefficients for power index
+# coefs = pd.DataFrame()
+# for i in range(5,14): #testing for year-over-year correlation
+#     r_sq = pearsonr(stats.iloc[:,i],stats.iloc[:,(i+10)])
+#     r_sq= pd.Series(round(r_sq[0],2))
+#     coefs = coefs.append(r_sq,ignore_index=True)
+# coefs = coefs.rename(columns={0:'y2y'})
+# coefs['2023'] = 0
+# for i in range(15,24): #testing for correlation to home-run rate in 2023
+#     r_sq = pearsonr(stats.iloc[:,i],stats.iloc[:,14])
+#     r_sq= float(round(r_sq[0],2))
+#     coefs.at[i-15,'2023'] = r_sq
+# coefs['2024'] = 0
+# for i in range(5,14): #same in 2024
+#     r_sq = pearsonr(stats.iloc[:,i],stats.iloc[:,4])
+#     r_sq= float(round(r_sq[0],2))
+#     coefs.at[i-5,'2024'] = r_sq
+# coefs['hr_avg'] = round((coefs['2023']+coefs['2024'])/2,2) #finding average
+# coefs = coefs.drop(columns=['2023','2024'])
+# coefs['coef'] = round(coefs['y2y']*coefs['hr_avg'],3)
+# coefs = coefs.drop(columns=['y2y','hr_avg']).T    
+# coefs.columns = stats24.columns[5:14]
